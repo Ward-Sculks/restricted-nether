@@ -18,15 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinEntity{
 
     private BlockPos cameToNetherFromPos;
-    @Shadow
-    public World world;
-    @Shadow
-    private BlockPos blockPos;
-    @Shadow
-    protected void tickPortalCooldown() {}
-
+    private boolean msgReceived;
+    @Shadow public World world;
+    @Shadow private BlockPos blockPos;
+    @Shadow protected abstract void tickPortalCooldown();
+    @Shadow public abstract void resetPortalCooldown();
     @Shadow public abstract boolean isPlayer();
-
     @Shadow public abstract void sendMessage(Text message);
 
     public double distanceFromLastPortal() {
@@ -39,8 +36,6 @@ public abstract class MixinEntity{
         int npz = this.cameToNetherFromPos.getZ();
 
         double result = Math.abs(Math.sqrt(Math.pow((npx-px), 2) + Math.pow((npz-pz), 2)));
-        RestrictedNether.LOGGER.debug("Distance from last portal: {}", result);
-
         return result;
     }
 
@@ -50,12 +45,18 @@ public abstract class MixinEntity{
         RegistryKey<World> world = this.world.getRegistryKey();
         if (!this.isPlayer()) return;
         if (world == World.OVERWORLD) {
+            // Calculating approximate postion after teleportation for distance calculations
             this.cameToNetherFromPos = this.blockPos.toImmutable().multiply(1/8);
         }
-        else if (world == World.NETHER && this.distanceFromLastPortal() > 100)
-            this.sendMessage(Text.literal("Ви не можете скористатися настільки віддаленими порталами"));
+        else if (world == World.NETHER && this.distanceFromLastPortal() > 100) {
+            if (!this.msgReceived) {
+                this.sendMessage(Text.literal("Ви не можете скористатися настільки віддаленими порталами"));
+                this.msgReceived = true;
+            }
+            this.resetPortalCooldown();
+            ci.cancel();
+        }
         this.tickPortalCooldown();
-        ci.cancel();
     }
 
 }
