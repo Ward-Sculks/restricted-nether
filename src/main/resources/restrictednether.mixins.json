@@ -4,9 +4,8 @@
   "package": "me.wardsculks.restrictednether.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinEntity"
-  ],
-  "server": [
+    "MixinEntity",
+    "MixinServerPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1
