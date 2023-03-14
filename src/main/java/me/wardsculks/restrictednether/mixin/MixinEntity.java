@@ -3,6 +3,7 @@ package me.wardsculks.restrictednether.mixin;
 import java.lang.Math;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -24,6 +25,7 @@ public abstract class MixinEntity{
     @Shadow protected abstract void tickPortalCooldown();
     @Shadow public abstract void resetPortalCooldown();
     @Shadow public abstract boolean isPlayer();
+    @Shadow protected abstract NbtList toNbtList(double... values);
 
     protected double distanceFromLastPortal() {
         // Calculates horizontal distance between player and point of the portal, which was used to enter the Nether
