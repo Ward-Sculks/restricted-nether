@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "restrictednether",
+  "version": "${version}",
+
+  "name": "Limited Nether",
+  "description": "Mod that makes portals at certain distance from portal, that was used to enter The Nether unusable.",
+  "authors": [
+    "WardSculks",
+    "txlbr"
+  ],
+  "contact": {
+    "homepage": "https://t.me/wardsculks",
+    "sources": "https://github.com/WardSculks/limited-nether"
+  },
+
+  "license": "All rights reserved.",
+  "icon": "assets/restrictednether/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.wardsculks.restrictednether.RestrictedNether"
+    ]
+  },
+  "mixins": [
+    "restrictednether.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.11",
+    "fabric-api": "*",
+    "minecraft": "~1.19.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
