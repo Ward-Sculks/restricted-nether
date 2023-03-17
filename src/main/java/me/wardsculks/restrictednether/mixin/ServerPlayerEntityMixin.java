@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class MixinServerPlayerEntity extends MixinEntity {
+public abstract class ServerPlayerEntityMixin extends EntityMixin {
 
     @Shadow public abstract void sendMessage(Text message, boolean overlay);
 
@@ -31,7 +31,7 @@ public abstract class MixinServerPlayerEntity extends MixinEntity {
                      target = "Lnet/minecraft/server/network/ServerPlayerEntity;enteredNetherPos:Lnet/minecraft/util/math/Vec3d;"),
             method = "moveToWorld(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;",
             locals = LocalCapture.CAPTURE_FAILSOFT)
-    protected void wsRN$moveToWorld(ServerWorld destination, CallbackInfoReturnable<Entity> cir, ServerWorld serverWorld,   RegistryKey registryKey, WorldProperties worldProperties, PlayerManager playerManager, TeleportTarget teleportTarget) {
+    protected void setPortalPosOnTeleportation(ServerWorld destination, CallbackInfoReturnable<Entity> cir, ServerWorld serverWorld, RegistryKey registryKey, WorldProperties worldProperties, PlayerManager playerManager, TeleportTarget teleportTarget) {
         // Sets this.netherSpawnPos during teleportation to Nether
         this.netherSpawnPos = teleportTarget.position;
     }
@@ -43,14 +43,14 @@ public abstract class MixinServerPlayerEntity extends MixinEntity {
 
     @Inject(at = @At(value = "TAIL"),
             method = "readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V")
-    private void wsRN$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+    private void readPortalPosFromNbt(NbtCompound nbt, CallbackInfo ci) {
         NbtList posNbtList = nbt.getList("NetherSpawnPos", NbtElement.DOUBLE_TYPE);
         this.netherSpawnPos = new Vec3d(posNbtList.getDouble(0), 0.0, posNbtList.getDouble(1));
     }
 
     @Inject(at = @At(value = "HEAD"),
             method = "writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V")
-    public void wsRN$writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+    public void writePortalPosToNbt(NbtCompound nbt, CallbackInfo ci) {
         nbt.put("NetherSpawnPos", this.toNbtList(this.netherSpawnPos.getX(), this.netherSpawnPos.getZ()));
     }
 }

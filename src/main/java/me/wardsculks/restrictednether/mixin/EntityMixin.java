@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin(Entity.class)
-public abstract class MixinEntity{
+public abstract class EntityMixin {
 
     public Vec3d netherSpawnPos;
     @Shadow public World world;
@@ -27,7 +27,7 @@ public abstract class MixinEntity{
     @Shadow public abstract boolean isPlayer();
     @Shadow protected abstract NbtList toNbtList(double... values);
 
-    protected double distanceFromLastPortal() {
+    private double distanceFromLastPortal() {
         // Calculates horizontal distance between player and point of the portal, which was used to enter the Nether
         if (netherSpawnPos == null) return 0.0;
 
@@ -42,7 +42,7 @@ public abstract class MixinEntity{
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;hasVehicle()Z"),
             method = "tickPortal()V", cancellable = true)
     // hasVehicle() is executed during final condition check for teleporting to other dimension
-    protected void wsRN$distanceRestriction(CallbackInfo ci) {
+    protected void checkDistanceFromPortal(CallbackInfo ci) {
         if (!this.isPlayer()) return;
 
         RegistryKey<World> world = this.world.getRegistryKey();
