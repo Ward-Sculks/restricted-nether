@@ -45,12 +45,14 @@ public abstract class ServerPlayerEntityMixin extends EntityMixin {
             method = "readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V")
     private void readPortalPosFromNbt(NbtCompound nbt, CallbackInfo ci) {
         NbtList posNbtList = nbt.getList("NetherSpawnPos", NbtElement.DOUBLE_TYPE);
+        if (posNbtList.isEmpty()) return;
         this.netherSpawnPos = new Vec3d(posNbtList.getDouble(0), 0.0, posNbtList.getDouble(1));
     }
 
     @Inject(at = @At(value = "HEAD"),
             method = "writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V")
     public void writePortalPosToNbt(NbtCompound nbt, CallbackInfo ci) {
+        if (this.netherSpawnPos == null) return;
         nbt.put("NetherSpawnPos", this.toNbtList(this.netherSpawnPos.getX(), this.netherSpawnPos.getZ()));
     }
 }
