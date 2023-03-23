@@ -3,7 +3,7 @@
   "id": "restrictednether",
   "version": "${version}",
 
-  "name": "Limited Nether",
+  "name": "Restricted Nether",
   "description": "Mod that makes portals at certain distance from portal, that was used to enter The Nether unusable.",
   "authors": [
     "WardSculks",
